@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+/frontend/.next/
+/frontend/out/
+
+# Go
+/backend/pokedex-backend
+
+# Environment
+.env
+
+# System
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+docker-compose.override.yml
