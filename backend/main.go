@@ -1,19 +1,39 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"log"
+	"pokedex-backend/handlers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    r := gin.Default()
-    
-    r.GET("/api/health", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "status": "ok",
-        })
-    })
+	r := gin.Default()
 
-    log.Fatal(r.Run(":8080"))
+	// CORS middleware
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
+
+	pokemonHandler := handlers.NewPokemonHandler()
+
+	api := r.Group("/api")
+	{
+		api.GET("/health", func(c *gin.Context) {
+			c.JSON(200, gin.H{"status": "ok"})
+		})
+
+		api.GET("/pokemon", pokemonHandler.GetAllPokemon)
+	}
+
+	log.Fatal(r.Run(":8080"))
 }
